@@ -23,4 +23,4 @@ class ImagesInput(py.detector.TrafficSignRecognition):
                 check = "detected objects" if size > 1 else "detected object"
                 print(f"[SAVED][{size} detected]: {os.path.basename(image_file_path)} {size} {check} {round(current_no/total*100, 3)}% ")
             else:
-                print(f"[NOT SAVED][{size} detected]: {os.path.basename(image)} ({current_no}/{total} images) {round(current_no/total*100, 3)}%")
+                print(f"[NOT SAVED][{size} detected]: {os.path.basename(image_file_path)} ({current_no}/{total} images) {round(current_no/total*100, 3)}%")
