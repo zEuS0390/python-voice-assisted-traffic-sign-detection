@@ -1,0 +1,11 @@
+# cache
+__pycache__/
+
+# Model file
+*.weights
+
+# Audio files
+voices/
+
+# virtualenv
+reco_app/
