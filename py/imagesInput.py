@@ -21,6 +21,6 @@ class ImagesInput(py.detector.TrafficSignRecognition):
             if size > 0:
                 cv2.imwrite(os.path.join(newDir, os.path.basename(image_file_path)), image)
                 check = "detected objects" if size > 1 else "detected object"
-                print(f"[SAVED][{size} detected]: {os.path.basename(image)} {size} {check} {round(current_no/total*100, 3)}% ")
+                print(f"[SAVED][{size} detected]: {os.path.basename(image_file_path)} {size} {check} {round(current_no/total*100, 3)}% ")
             else:
                 print(f"[NOT SAVED][{size} detected]: {os.path.basename(image)} ({current_no}/{total} images) {round(current_no/total*100, 3)}%")
