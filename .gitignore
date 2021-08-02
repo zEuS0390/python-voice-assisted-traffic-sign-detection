@@ -9,3 +9,6 @@ voices/
 
 # virtualenv
 reco_app/
+
+# Database file
+*.db
