@@ -1,6 +1,7 @@
 from py.videoInput import VideoInput
 from py.imagesInput import ImagesInput
 from py.cameraInput import CameraInput
+from py.voices import Voices
 import argparse
 
 """
@@ -15,6 +16,9 @@ import argparse
 
 if __name__=="__main__":
     config_req = ".\config_req.txt"
+    audioDB = Voices(config_req, \
+                     ".\\voices",
+                     "audioDB.db")
     camInput = CameraInput(config_req)
     vidInput = VideoInput(config_req)
     imgInput = ImagesInput(config_req)
