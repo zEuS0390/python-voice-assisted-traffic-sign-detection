@@ -1,4 +1,4 @@
-import cv2, numpy
+import cv2, numpy, py.util
 
 # Detector class
 class detector(object):
@@ -71,25 +71,19 @@ class TrafficSignRecognition(object):
 
     # Constructor
     def __init__(self, file):
-        req = self.loadReq(file)
+        req = py.util.loadReq(file)
         self.OBJDetector = detector(weights=req["weights"],
                                              cfg=req["cfg"],
                                              names=req["names"],
                                              cuda=True)
 
-    # Load the requirements
-    def loadReq(self, filepath):
-        labels = ["weights", "cfg", "names"]
-        with open(filepath, "r") as conf:
-            req = {labels[index]:line.rstrip() for index, line in enumerate(conf.readlines())}
-        return req
-
     # Draw the image with detected object/s
-    def drawDetected(self, image, detected_objects, boundingColor=(0, 255, 0), thickness=2):
+    def drawDetected(self, image, detected_objects, thickness=2):
         for index in range(detected_objects["size"]):
             x_pos, y_pos, w_size, h_size = detected_objects["squares"][index]
             confidence = detected_objects["confidences"][index]
             class_id = detected_objects["class_ids"][index]
-            cv2.rectangle(image, (x_pos, y_pos), (x_pos+w_size, y_pos+h_size), boundingColor, thickness)
-            cv2.putText(image, self.OBJDetector.classes[class_id]+" "+str(round(confidence, 2)), (x_pos, y_pos), cv2.FONT_HERSHEY_PLAIN, 2, boundingColor, thickness)
+            color = py.util.BGR_COLORS[list(py.util.BGR_COLORS.keys())[class_id]]
+            cv2.rectangle(image, (x_pos, y_pos), (x_pos+w_size, y_pos+h_size), color, thickness)
+            cv2.putText(image, self.OBJDetector.classes[class_id]+" "+str(round(confidence, 2)), (x_pos, y_pos), cv2.FONT_HERSHEY_PLAIN, 2, color, thickness)
         return image
