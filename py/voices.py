@@ -19,7 +19,6 @@ class GroupVoice:
         self.maleVoices = []
 
     def add(self, voice):
-        print(voice.file_name, voice.gender_name)
         if voice.gender_name == "female":
             self.femaleVoices.append(voice)
         elif voice.gender_name == "male":
@@ -56,14 +55,15 @@ class Voices(trafficRecoDB):
         self.setupReq()
         self.removeNoExist("voice_files")
         self.insertToDB()
+        self.voices = self.getVoices()
 
     def playVoice(self, class_name, gender_name):
         if gender_name == "male":
-            voices = self.getVoices()[class_name].maleVoices
-            random.choice(voices).play()
+            male_voices = self.voices[class_name].maleVoices
+            random.choice(male_voices).play()
         elif gender_name == "female":
-            voices = self.getVoices()[class_name].femaleVoices
-            random.choice(voices).play()
+            female_voices = self.voices[class_name].femaleVoices
+            random.choice(female_voices).play()
 
     # Get the voices for use
     def getVoices(self):
