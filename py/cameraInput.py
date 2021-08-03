@@ -1,10 +1,12 @@
 from py.detector import TrafficSignRecognition
+from py.voices import Voices
 import cv2, threading
 
 class CameraInput(TrafficSignRecognition):
 
     def __init__(self, conf):
         super(CameraInput, self).__init__(conf)
+        self.audioDB = Voices(conf)
         self.camIsOpened = True
         self.current_frame = None
         self.detected_objects = None
