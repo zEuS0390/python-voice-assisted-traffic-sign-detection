@@ -30,12 +30,5 @@ def explore(root, subdir=False):
             found += explore(file, subdir)
     return found
 
-# Load the requirements
-def loadReq(filepath):
-    labels = ["weights", "cfg", "names"]
-    with open(filepath, "r") as conf:
-        req = {labels[index]:line.rstrip() for index, line in enumerate(conf.readlines())}
-    return req
-
 def getDir(filepath):
     return os.path.dirname(os.path.realpath(filepath))

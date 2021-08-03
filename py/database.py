@@ -1,16 +1,13 @@
-from py.util import getDir, loadReq
+from py.util import getDir
 import sqlite3, os
 
 root_dir = getDir(getDir(__file__))
 
 class trafficRecoDB:
 
-    def __init__(self, dbpath, conf_path=""):
+    def __init__(self, dbpath):
         self.conn = sqlite3.connect(dbpath)
         self.cursor = self.conn.cursor()
-        self.conf_path = conf_path
-        if len(conf_path) > 0:
-            self.req = loadReq(conf_path)
         self.setupTables()
 
     # Close the connection to the database

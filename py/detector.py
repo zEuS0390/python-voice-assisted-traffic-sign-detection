@@ -1,4 +1,4 @@
-from py.util import getDir, join, loadReq, BGR_COLORS
+from py.util import getDir, join, BGR_COLORS
 import cv2, numpy
 
 root_dir = getDir(getDir(__file__))
@@ -13,20 +13,20 @@ class detector(object):
     #   "cfg":      <configuration>, 
     #   "names":    <labels>
     #  }
-    def __init__(self, **req):
-        self.req = req
+    def __init__(self, conf):
+        self.conf = conf
         self.loadModel()
 
     # Load the model
     def loadModel(self):
-        self.network = cv2.dnn.readNet(join(req_dir, self.req["weights"]), 
-                                       join(req_dir, self.req["cfg"]))
-        if self.req["cuda"]:
+        self.network = cv2.dnn.readNet(join(req_dir, self.conf["Requirements"]["weights"]), 
+                                       join(req_dir, self.conf["Requirements"]["cfg"]))
+        if self.conf.getboolean("GPU", "CUDA"):
             self.network.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
             self.network.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         layer_names = self.network.getLayerNames()
         self.output_layers = [layer_names[layer[0] - 1] for layer in self.network.getUnconnectedOutLayers()]
-        with open(join(req_dir, self.req["names"]), "r") as file:
+        with open(join(req_dir, self.conf["Requirements"]["names"]), "r") as file:
             self.classes = [line.rstrip() for line in file.readlines()]
 
     # Detection method
@@ -34,7 +34,10 @@ class detector(object):
         if image is None:
             return
         height, width, shape = image.shape
-        blob = cv2.dnn.blobFromImage(image, 1/255, (608, 608), swapRB=True, crop=False)
+        blob = cv2.dnn.blobFromImage(image, 1/255, 
+                                    (self.conf.getint("Detection", "width"), 
+                                     self.conf.getint("Detection", "height")), 
+                                    swapRB=True, crop=False)
         self.network.setInput(blob)
         outputs = self.network.forward(self.output_layers)
         all_detected = {"squares": [], 
@@ -75,12 +78,8 @@ class detector(object):
 class TrafficSignRecognition(object):
 
     # Constructor
-    def __init__(self, file):
-        req = loadReq(file)
-        self.OBJDetector = detector(weights=req["weights"],
-                                             cfg=req["cfg"],
-                                             names=req["names"],
-                                             cuda=True)
+    def __init__(self, conf):
+        self.OBJDetector = detector(conf)
 
     # Draw the image with detected object/s
     def drawDetected(self, image, detected_objects, thickness=2):

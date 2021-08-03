@@ -1,4 +1,4 @@
-from py.util import join, getDir, loadReq
+from py.util import join, getDir
 from py.database import trafficRecoDB
 import os, glob
 
@@ -7,10 +7,10 @@ req_dir = join(root_dir, "req")
 
 class Voices(trafficRecoDB):
 
-    def __init__(self, conf, voices_path, dbpath):
-        super(Voices, self).__init__(dbpath)
-        self.voices_path = self.loadAudioFiles(voices_path)
-        self.req = loadReq(conf)
+    def __init__(self, conf):
+        super(Voices, self).__init__(conf["Requirements"]["database"]+".db")
+        self.voices_path = self.loadAudioFiles(join(root_dir, conf["Requirements"]["voices_directory"]))
+        self.conf = conf
         self.setupReq()
         self.removeNoExist("voice_files")
         self.insertToDB()
@@ -30,7 +30,7 @@ class Voices(trafficRecoDB):
             self.insert("lang_gen_voices", lang_name=lang)
         for gender in self.genders:
             self.insert("genders", gender_name=gender)
-        with open(join(req_dir, self.req["names"]), "r") as file:
+        with open(join(req_dir, self.conf["Requirements"]["names"]), "r") as file:
             self.names = [name.rstrip() for name in file.readlines()]
             for name in self.names:
                 self.insert("classes", class_name=name)
