@@ -1,22 +1,35 @@
 from py.detector import TrafficSignRecognition
 from py.voices import Voices
-import cv2, threading
+import cv2, threading, time
 
 class CameraInput(TrafficSignRecognition):
 
     def __init__(self, conf):
         super(CameraInput, self).__init__(conf)
         self.audioDB = Voices(conf)
-        self.audioDB.playVoice("intersection", "female")
         self.camIsOpened = True
         self.current_frame = None
         self.detected_objects = None
+        self.timeState = True
+        self.timeInterval = 5
+        self.queue = []
+        threading.Thread(target=self.timeThread).start()
+
+    def timeThread(self):
+        while self.timeState:
+            for c_voice in self.queue:
+                self.audioDB.playVoice(c_voice, "male")
+                self.queue.remove(c_voice)
 
     # Detection function for thread
     def detection(self):
         while self.camIsOpened:
             if  self.current_frame is not None:
                 self.detected_objects = self.OBJDetector.detect(self.current_frame, NMS=True)
+                for class_id in self.detected_objects["class_ids"]:
+                    class_name = self.OBJDetector.classes[class_id]
+                    if class_name not in self.queue:
+                        self.queue.append(class_name)
 
     # Detect using IP or link video stream input
     def detectIPCamera(self, link):
