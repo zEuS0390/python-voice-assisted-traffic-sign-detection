@@ -1,6 +1,8 @@
-import os, cv2, py.util, py.detector
+from py.detector import TrafficSignRecognition
+from py.util import explore
+import os, cv2
 
-class ImagesInput(py.detector.TrafficSignRecognition):
+class ImagesInput(TrafficSignRecognition):
 
     def __init__(self, conf):
         super(ImagesInput, self).__init__(conf)
@@ -10,7 +12,7 @@ class ImagesInput(py.detector.TrafficSignRecognition):
         newDir = os.path.join(directory, "detected_images")
         if not os.path.exists(newDir):
             os.mkdir(newDir)
-        image_file_paths = py.util.explore(directory, subdir=True)
+        image_file_paths = explore(directory, subdir=True)
         current_no, total = 0, len(image_file_paths)
         for image_file_path in image_file_paths:
             current_no += 1
