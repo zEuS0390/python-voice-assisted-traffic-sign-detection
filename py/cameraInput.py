@@ -12,14 +12,15 @@ class CameraInput(TrafficSignRecognition):
         self.detected_objects = None
         self.timeState = True
         self.timeInterval = 5
-        self.queue = []
-        threading.Thread(target=self.timeThread).start()
+        self.queue = {
+            "no left turn":True,
+            "no parking":True
+        }
+        # threading.Thread(target=self.timeThread).start()
 
     def timeThread(self):
         while self.timeState:
-            for c_voice in self.queue:
-                self.audioDB.playVoice(c_voice, "male")
-                self.queue.remove(c_voice)
+            time.sleep(1)
 
     # Detection function for thread
     def detection(self):
@@ -28,8 +29,10 @@ class CameraInput(TrafficSignRecognition):
                 self.detected_objects = self.OBJDetector.detect(self.current_frame, NMS=True)
                 for class_id in self.detected_objects["class_ids"]:
                     class_name = self.OBJDetector.classes[class_id]
-                    if class_name not in self.queue:
-                        self.queue.append(class_name)
+
+                    if self.queue[class_name]:
+                        self.audioDB.playVoice(class_name, "male")
+                        self.queue[class_name] = False
 
     # Detect using IP or link video stream input
     def detectIPCamera(self, link):
