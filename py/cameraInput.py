@@ -7,6 +7,7 @@ class CameraInput(TrafficSignRecognition):
     def __init__(self, conf):
         super(CameraInput, self).__init__(conf)
         self.audioDB = Voices(conf)
+        self.audioDB.playVoice("intersection", "female")
         self.camIsOpened = True
         self.current_frame = None
         self.detected_objects = None
