@@ -1,6 +1,7 @@
-import cv2, py.detector, threading
+from py.detector import TrafficSignRecognition
+import cv2, threading
 
-class CameraInput(py.detector.TrafficSignRecognition):
+class CameraInput(TrafficSignRecognition):
 
     def __init__(self, conf):
         super(CameraInput, self).__init__(conf)
