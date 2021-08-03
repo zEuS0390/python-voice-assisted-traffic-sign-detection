@@ -15,10 +15,13 @@ BGR_COLORS = {
     "CRIMSON":          (60,20,220)
 }
 
+def join(*args):
+    return os.path.join(*args)
+
 # Search files in root directory
 def explore(root, subdir=False):
     found = []
-    files = glob.glob(os.path.join(root, "*"))
+    files = glob.glob(join(root, "*"))
     for file in files:
         fileType = os.path.splitext(os.path.basename(file))[1]
         if fileType in IMAGETYPES:
@@ -33,3 +36,6 @@ def loadReq(filepath):
     with open(filepath, "r") as conf:
         req = {labels[index]:line.rstrip() for index, line in enumerate(conf.readlines())}
     return req
+
+def getDir(filepath):
+    return os.path.dirname(os.path.realpath(filepath))
