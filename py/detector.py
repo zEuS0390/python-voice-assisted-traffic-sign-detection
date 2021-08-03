@@ -1,4 +1,8 @@
-import cv2, numpy, py.util
+from py.util import getDir, join, loadReq, BGR_COLORS
+import cv2, numpy
+
+root_dir = getDir(getDir(__file__))
+req_dir = join(root_dir, "req")
 
 # Detector class
 class detector(object):
@@ -15,13 +19,14 @@ class detector(object):
 
     # Load the model
     def loadModel(self):
-        self.network = cv2.dnn.readNet(self.req["weights"], self.req["cfg"])
+        self.network = cv2.dnn.readNet(join(req_dir, self.req["weights"]), 
+                                       join(req_dir, self.req["cfg"]))
         if self.req["cuda"]:
             self.network.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
             self.network.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         layer_names = self.network.getLayerNames()
         self.output_layers = [layer_names[layer[0] - 1] for layer in self.network.getUnconnectedOutLayers()]
-        with open(self.req["names"], "r") as file:
+        with open(join(req_dir, self.req["names"]), "r") as file:
             self.classes = [line.rstrip() for line in file.readlines()]
 
     # Detection method
@@ -71,7 +76,7 @@ class TrafficSignRecognition(object):
 
     # Constructor
     def __init__(self, file):
-        req = py.util.loadReq(file)
+        req = loadReq(file)
         self.OBJDetector = detector(weights=req["weights"],
                                              cfg=req["cfg"],
                                              names=req["names"],
@@ -83,7 +88,7 @@ class TrafficSignRecognition(object):
             x_pos, y_pos, w_size, h_size = detected_objects["squares"][index]
             confidence = detected_objects["confidences"][index]
             class_id = detected_objects["class_ids"][index]
-            color = py.util.BGR_COLORS[list(py.util.BGR_COLORS.keys())[class_id]]
+            color = BGR_COLORS[list(BGR_COLORS.keys())[class_id]]
             cv2.rectangle(image, (x_pos, y_pos), (x_pos+w_size, y_pos+h_size), color, thickness)
             cv2.putText(image, self.OBJDetector.classes[class_id]+" "+str(round(confidence, 2)), (x_pos, y_pos), cv2.FONT_HERSHEY_PLAIN, 2, color, thickness)
         return image
