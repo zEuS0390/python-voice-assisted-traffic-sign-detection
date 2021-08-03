@@ -1,7 +1,6 @@
 from py.videoInput import VideoInput
 from py.imagesInput import ImagesInput
 from py.cameraInput import CameraInput
-from py.voices import Voices
 from py.util import getDir, join
 import argparse, configparser, sys
 
