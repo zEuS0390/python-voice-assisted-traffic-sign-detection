@@ -2,6 +2,7 @@ from py.videoInput import VideoInput
 from py.imagesInput import ImagesInput
 from py.cameraInput import CameraInput
 from py.voices import Voices
+from py.util import getDir, join
 import argparse
 
 """
@@ -14,11 +15,13 @@ import argparse
         - MARQUEZ, IAN GABRIEL
 """
 
+root_dir = getDir(__file__)
+
 if __name__=="__main__":
-    config_req = ".\config_req.txt"
+    config_req = join(root_dir, "config_req.txt")
     audioDB = Voices(config_req, \
-                     ".\\voices",
-                     "audioDB.db")
+                     join(root_dir, "voices"),
+                     join(root_dir, "audioDB.db"))
     camInput = CameraInput(config_req)
     vidInput = VideoInput(config_req)
     imgInput = ImagesInput(config_req)
