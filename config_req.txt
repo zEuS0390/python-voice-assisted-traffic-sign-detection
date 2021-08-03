@@ -1,3 +1,0 @@
-traffic_sign_recognition_v4.3.weights
-traffic_sign_recognition.cfg
-classes.names
