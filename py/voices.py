@@ -1,13 +1,26 @@
-import os, glob, py.database, py.util
+from py.util import join, getDir, loadReq
+from py.database import trafficRecoDB
+import os, glob
 
-class Voices(py.database.trafficRecoDB):
+root_dir = getDir(getDir(__file__))
+req_dir = join(root_dir, "req")
+
+class Voices(trafficRecoDB):
 
     def __init__(self, conf, voices_path, dbpath):
         super(Voices, self).__init__(dbpath)
-        self.voices = {}
         self.voices_path = self.loadAudioFiles(voices_path)
-        self.req = py.util.loadReq(conf)
+        self.req = loadReq(conf)
         self.setupReq()
+        self.removeNoExist("voice_files")
+        self.insertToDB()
+
+    # Get the voices for use
+    def getVoices(self):
+        voices = {}
+        for name in self.names:
+            voices[name] = self.getAllWhere("voice_files", class_Name=name)
+        return voices
 
     # Set up the requirements
     def setupReq(self):
@@ -17,7 +30,7 @@ class Voices(py.database.trafficRecoDB):
             self.insert("lang_gen_voices", lang_name=lang)
         for gender in self.genders:
             self.insert("genders", gender_name=gender)
-        with open(self.req["names"], "r") as file:
+        with open(join(req_dir, self.req["names"]), "r") as file:
             self.names = [name.rstrip() for name in file.readlines()]
             for name in self.names:
                 self.insert("classes", class_name=name)
@@ -54,15 +67,17 @@ class Voices(py.database.trafficRecoDB):
             try:
                 container = self.getParams(voice_file_path)
                 if container is not None:
-                    print(f"[SUCCESS]: {voice_file_path} INSERTED")
+                    print(f"[AUDIO LOAD]: {os.path.basename(voice_file_path)}")
                     self.insert("voice_files", voice_file_name=container["voice_file_name"],
                                                 file_path=container["file_path"],
                                                 file_num=container["file_num"],
                                                 lang_name=container["lang_name"],
                                                 gender_name=container["gender_name"],
                                                 class_name=container["class_name"])
+                else:
+                    print(f"[AUDIO FAILED]: {os.path.basename(voice_file_path)}")
             except Exception as error:
-                print(f"[ERROR {error}]: {voice_file_path} NOT INSERTED")
+                print(f"[ERROR {error}]: {voice_file_path}")
                 continue
 
     # Search for all audio files in a specified directory
@@ -71,8 +86,10 @@ class Voices(py.database.trafficRecoDB):
         files = glob.glob(os.path.join(root, "*"))
         for file in files:
             fileType = os.path.splitext(os.path.basename(file))[1]
-            if fileType in [".mp3"]:
+            if fileType in [".wav"]:
                 found.append(file)
             if os.path.isdir(file):
                 found += self.loadAudioFiles(file)
         return found
+
+    
