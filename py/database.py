@@ -1,4 +1,7 @@
-import sqlite3, py.util, os
+from py.util import getDir, loadReq
+import sqlite3, os
+
+root_dir = getDir(getDir(__file__))
 
 class trafficRecoDB:
 
@@ -7,7 +10,7 @@ class trafficRecoDB:
         self.cursor = self.conn.cursor()
         self.conf_path = conf_path
         if len(conf_path) > 0:
-            self.req = py.util.loadReq(conf_path)
+            self.req = loadReq(conf_path)
         self.setupTables()
 
     # Close the connection to the database
@@ -56,8 +59,8 @@ class trafficRecoDB:
         """)
 
     # Check the file paths if some does not exist in the directory
-    def checkIntegrity(self, table, *args):
-        self.execQuery(f"SELECT ({','.join(args)}) FROM {table};")
+    def removeNoExist(self, table):
+        self.execQuery(f"SELECT (file_path) FROM {table};")
         file_paths = self.cursor.fetchall()
         for file_path in file_paths:
             if not os.path.exists(file_path[0]):
@@ -72,6 +75,15 @@ class trafficRecoDB:
     # Get all values from table
     def getAll(self, table):
         self.execQuery(f" SELECT * FROM {table};")
+        return self.cursor.fetchall()
+
+    # Get all rows with constraints
+    def getAllWhere(self, table, **kwargs):
+        if len(kwargs) == 0:
+            return
+        where = ",".join([key + "=" + ("\""+kwargs[key]+"\"" if isinstance(kwargs[key], str) else kwargs[key])  for key in kwargs])
+        query = f"SELECT * FROM {table} WHERE ({where});"
+        self.execQuery(query)
         return self.cursor.fetchall()
 
     # Delete all from table
