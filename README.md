@@ -1,23 +1,31 @@
 # Voice Assisted Traffic Sign Detection
 
-This system uses Machine learning to identify Regulatory and Warning Traffic Signs.
+It uses state-of-the-art object detection algorithm (YOLO) to identify regulatory and warning traffic signs. The dataset is a collection of images with different classes found across the internet. We used browser extension to gather images from several image hosting sites and also utilized road trip videos to gather field data.
 
-## Documentation
+## Team Members
+- Baltazar, Zeus James
+- Bantuas, Junaid
+- Basbacio, Martin Lorenzo
+- Marquez, Ian Gabriel
 
-**Tools**
-
+## Tools and Dependencies
 - LabelImg by Tzutalin
 - OpenCV
-- Darknet
-- YoloV3
+- Numpy
+- Darknet by AlexeyAB
 
+## Classes with mAP
+- stop ~~(0.0%)~~
+- intersection ~~(0.0%)~~
+- no u turn ~~(0.0%)~~
+- no left turn ~~(0.0%)~~
+- no right turn ~~(0.0%)~~
+- speed limit ~~(0.0%)~~
+- pedestrian ~~(0.0%)~~
+- warning ~~(0.0%)~~
+- no parking ~~(0.0%)~~
+- one way ~~(0.0%)~~
+- no entry ~~(0.0%)~~
 
-**Data**
-
-The datasets used by the project covers regulatory and warning road traffic signs defined by the Philippne Land Transportation Office
-
-
-
-
-**Methodology**
-We have used a browser extension to gather images from several image hosting sites and also utilized road trip videos to gather field data.
+## Training
+The training was performed with the help of google colaboratory's free GPU and darknet neural network framework.
